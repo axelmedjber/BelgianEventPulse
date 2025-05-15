@@ -25,7 +25,7 @@ export default function EventsSidebar({
     <aside className="events-container w-full md:w-2/5 lg:w-1/3 bg-background border-r border-border flex flex-col">
       {/* Search and filter bar */}
       <div className="sticky top-0 bg-background z-10 p-4 border-b border-border">
-        <h2 className="font-medium text-lg text-primary">Brussels Events</h2>
+        <h2 className="font-medium text-lg text-primary">Belgium Events</h2>
       </div>
 
       {/* Events list */}

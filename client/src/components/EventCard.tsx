@@ -47,7 +47,10 @@ export default function EventCard({ event, onClick }: EventCardProps) {
             {distanceFromUser && <span className="text-sm text-muted-foreground">{distanceFromUser}</span>}
           </div>
           <h3 className="font-roboto font-medium text-lg mt-1 line-clamp-1">{event.title}</h3>
-          <p className="text-sm text-muted-foreground line-clamp-1">{event.location}</p>
+          <p className="text-sm text-muted-foreground line-clamp-1">
+            {event.location}
+            {event.city && event.city !== 'All' && <span className="ml-1">• {event.city}</span>}
+          </p>
           <div className="flex items-center mt-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-2" />
             <span>{formatDate(new Date(event.date))}</span>
