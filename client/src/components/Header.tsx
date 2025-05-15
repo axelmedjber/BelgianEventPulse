@@ -1,6 +1,6 @@
 import { MapPin, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from '../../src/components/ThemeProvider';
+import { useTheme } from '../components/ThemeProvider';
 
 export default function Header() {
   const { theme, setTheme } = useTheme();

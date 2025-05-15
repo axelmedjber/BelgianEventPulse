@@ -41,23 +41,12 @@ export function EventDetailModal({ event, isOpen, onClose }: EventDetailModalPro
         
         {/* Modal content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-16rem)]">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <span className="inline-block px-3 py-1 bg-[#FAE042] text-sm font-semibold rounded-full text-[#333333] mb-2">
-                {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
-              </span>
-              <h2 className="font-roboto font-bold text-2xl">{event.title}</h2>
-              <p className="text-gray-600">{event.location}</p>
-            </div>
-            <div className="flex space-x-2">
-              <Button className="bg-[#003F8C] text-white px-4 py-2 rounded-md hover:bg-opacity-90">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                Tickets
-              </Button>
-              <Button variant="outline" size="icon" className="border border-gray-300 px-2 py-2 rounded-md hover:bg-[#F5F5F5]">
-                <Heart className="h-5 w-5" />
-              </Button>
-            </div>
+          <div className="mb-4">
+            <span className="inline-block px-3 py-1 bg-[#FAE042] text-sm font-semibold rounded-full text-[#333333] mb-2">
+              {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
+            </span>
+            <h2 className="font-roboto font-bold text-2xl">{event.title}</h2>
+            <p className="text-gray-600">{event.location}</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
