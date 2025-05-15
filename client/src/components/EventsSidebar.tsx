@@ -15,7 +15,6 @@ interface EventsSidebarProps {
   onFilterChange: (filter: EventFilter) => void;
   onEventClick: (event: Event) => void;
   selectedCategory: EventCategory | 'all';
-  dateFilter: string;
 }
 
 export default function EventsSidebar({
@@ -25,8 +24,7 @@ export default function EventsSidebar({
   onSearchChange,
   onFilterChange,
   onEventClick,
-  selectedCategory,
-  dateFilter
+  selectedCategory
 }: EventsSidebarProps) {
   const [delayedSearchQuery, setDelayedSearchQuery] = useState(searchQuery);
 
@@ -50,13 +48,7 @@ export default function EventsSidebar({
     { label: 'Theater', value: 'theater' }
   ];
 
-  const dateOptions = [
-    { label: 'Today', value: 'today' },
-    { label: 'Tomorrow', value: 'tomorrow' },
-    { label: 'This weekend', value: 'weekend' },
-    { label: 'Next week', value: 'next-week' },
-    { label: 'Custom...', value: 'custom' }
-  ];
+  // No date options as we're only showing today's events
 
   return (
     <aside className="events-container w-full md:w-2/5 lg:w-1/3 bg-white border-r border-gray-200 flex flex-col">
@@ -90,21 +82,9 @@ export default function EventsSidebar({
         </div>
         
         <div className="flex space-x-2 mt-2">
-          <Select 
-            value={dateFilter} 
-            onValueChange={(value) => onFilterChange({ category: selectedCategory, date: value })}
-          >
-            <SelectTrigger className="bg-white border border-gray-300 rounded-md text-sm px-2 py-1 h-9 focus:outline-none focus:ring-1 focus:ring-[#003F8C]">
-              <SelectValue placeholder="Select date" />
-            </SelectTrigger>
-            <SelectContent>
-              {dateOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex-1 bg-[#F5F5F5] rounded-md px-3 py-2 text-sm text-[#003F8C] font-medium">
+            <span>Today's Events</span>
+          </div>
           
           <Button variant="outline" className="flex items-center space-x-1 border border-gray-300 rounded-md text-sm px-2 py-1 h-9 hover:bg-[#F5F5F5]">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>

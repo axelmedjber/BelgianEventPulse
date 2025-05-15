@@ -10,10 +10,9 @@ interface HomeProps {
 }
 
 export default function Home({ onEventSelect }: HomeProps) {
-  // State for search query, selected category, and date filter
+  // State for search query and selected category
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<EventCategory | 'all'>('all');
-  const [dateFilter, setDateFilter] = useState<string>('today');
   
   // State for map center and zoom
   const [mapCenter, setMapCenter] = useState<[number, number]>([4.3517, 50.8503]); // Brussels coordinates
@@ -21,10 +20,10 @@ export default function Home({ onEventSelect }: HomeProps) {
 
   // Fetch events from the API
   const { data: events = [], isLoading } = useQuery<Event[]>({
-    queryKey: ['/api/events', selectedCategory, dateFilter],
+    queryKey: ['/api/events', selectedCategory],
   });
 
-  // Apply filters to events
+  // Apply filters to events - only show "happening now" events and filter by category and search
   const filteredEvents = events.filter(event => {
     // Filter by search query
     const matchesSearch = 
@@ -35,13 +34,17 @@ export default function Home({ onEventSelect }: HomeProps) {
     // Filter by category
     const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
     
-    return matchesSearch && matchesCategory;
+    // Filter to show only events happening now (today)
+    const eventDate = new Date(event.date);
+    const today = new Date();
+    const isHappeningToday = eventDate.toDateString() === today.toDateString();
+    
+    return matchesSearch && matchesCategory && isHappeningToday;
   });
 
-  // Handle filter changes
+  // Handle filter changes - now only for category
   const handleFilterChange = (filter: EventFilter) => {
     setSelectedCategory(filter.category || 'all');
-    setDateFilter(filter.date || 'today');
   };
 
   // Handle map marker click
@@ -70,7 +73,6 @@ export default function Home({ onEventSelect }: HomeProps) {
           onFilterChange={handleFilterChange}
           onEventClick={handleEventCardClick}
           selectedCategory={selectedCategory}
-          dateFilter={dateFilter}
         />
         
         <MapView
