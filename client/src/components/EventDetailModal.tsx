@@ -68,7 +68,10 @@ export function EventDetailModal({ event, isOpen, onClose }: EventDetailModalPro
                 <MapPin className="mt-1 mr-3 text-primary h-5 w-5" />
                 <div>
                   <p className="font-semibold">{event.venue || event.location.split(',')[0]}</p>
-                  <p className="text-muted-foreground">{event.location}</p>
+                  <p className="text-muted-foreground">
+                    {event.location}
+                    {event.city && event.city !== 'All' && ` • ${event.city}`}
+                  </p>
                   <p className="text-sm text-accent underline cursor-pointer mt-1">View on map</p>
                 </div>
               </div>

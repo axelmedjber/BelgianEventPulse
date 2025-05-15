@@ -78,7 +78,8 @@ export class MemStorage implements IStorage {
       venue: insertEvent.venue || null,
       organizerImageUrl: insertEvent.organizerImageUrl || null,
       sourceUrl: insertEvent.sourceUrl || '',
-      featured: insertEvent.featured || false
+      featured: insertEvent.featured || false,
+      city: insertEvent.city || null
     };
     this.events.set(id, event);
     return event;

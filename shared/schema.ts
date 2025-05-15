@@ -22,6 +22,21 @@ export const eventSourceEnum = z.enum([
   'ticketmaster'
 ]);
 
+// Define Belgian cities using an enum
+export const belgianCityEnum = z.enum([
+  'Brussels',
+  'Antwerp',
+  'Ghent',
+  'Bruges',
+  'Leuven',
+  'Liège',
+  'Namur',
+  'Charleroi',
+  'Mons',
+  'Ostend',
+  'All'
+]);
+
 // Events table definition
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
@@ -41,12 +56,14 @@ export const events = pgTable("events", {
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),
   featured: boolean("featured").default(false),
+  city: text("city"),
 });
 
 // Schema for inserting a new event
 export const insertEventSchema = createInsertSchema(events).extend({
   category: eventCategoryEnum,
-  source: eventSourceEnum
+  source: eventSourceEnum,
+  city: belgianCityEnum.optional()
 });
 
 // User's favorite events
@@ -74,6 +91,7 @@ export type User = typeof users.$inferSelect;
 
 export type EventCategory = z.infer<typeof eventCategoryEnum>;
 export type EventSource = z.infer<typeof eventSourceEnum>;
+export type BelgianCity = z.infer<typeof belgianCityEnum>;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 export type Event = typeof events.$inferSelect;
 export type UserFavorite = typeof userFavorites.$inferSelect;
