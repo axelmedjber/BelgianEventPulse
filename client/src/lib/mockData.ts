@@ -1,0 +1,142 @@
+// This file is used only for development and testing
+// In production, events will be fetched from the API
+import { Event, EventCategory, EventSource } from './types';
+
+export const generateMockEvents = (): Event[] => {
+  const events: Event[] = [
+    {
+      id: '1',
+      title: 'Brussels Jazz Festival',
+      description: 'Join us for an unforgettable evening of jazz music in the heart of Brussels.',
+      longDescription: 'Join us for an unforgettable evening of jazz music in the heart of Brussels. The festival features local and international jazz musicians performing in the historic Grand Place.\n\nThis year\'s lineup includes the Brussels Jazz Orchestra, Quartet Diminished, and international guest star Nina Simmons. Experience the magic of jazz music against the backdrop of Brussels\' most iconic square.\n\nFood and beverages will be available for purchase. The event will take place rain or shine, with covered seating areas available.',
+      date: new Date(new Date().setHours(20, 0, 0, 0)).toISOString(),
+      endDate: new Date(new Date().setHours(23, 0, 0, 0)).toISOString(),
+      location: 'Grand Place, Brussels',
+      venue: 'Grand Place',
+      category: 'music',
+      imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Brussels Cultural Association',
+      organizerImageUrl: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100',
+      source: 'brussels_open_data',
+      latitude: 50.8466,
+      longitude: 4.3528,
+      distance: 2.1,
+      featured: true
+    },
+    {
+      id: '2',
+      title: 'Contemporary Art Exhibition',
+      description: 'Explore the latest in contemporary art at the Royal Museums of Fine Arts.',
+      longDescription: 'The Royal Museums of Fine Arts present a groundbreaking exhibition featuring works from emerging and established contemporary artists from Belgium and beyond.\n\nThis exhibition explores themes of identity, sustainability, and digital transformation through various media including paintings, sculptures, installations, and digital art.\n\nGuided tours available daily at 11:00 AM and 3:00 PM. Workshop activities for children and families on weekends.',
+      date: new Date(new Date().setDate(new Date().getDate() + 1)).setHours(10, 0, 0, 0).toString(),
+      location: 'Royal Museums of Fine Arts, Brussels',
+      venue: 'Royal Museums of Fine Arts',
+      category: 'art',
+      imageUrl: 'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Royal Museums of Fine Arts',
+      source: 'eventbrite',
+      latitude: 50.8422,
+      longitude: 4.3585,
+      distance: 0.8
+    },
+    {
+      id: '3',
+      title: 'Belgian Food Festival',
+      description: 'Taste the best of Belgian cuisine with local delicacies and craft beers.',
+      longDescription: 'The annual Belgian Food Festival returns to Place Sainte-Catherine this weekend! Sample authentic Belgian cuisine from over 30 local vendors offering everything from traditional waffles and chocolates to savory specialties and craft beers.\n\nHigh-profile Belgian chefs will give live cooking demonstrations throughout the day. Don\'t miss the waffle-making workshop and beer tasting sessions (tickets required for some activities).\n\nFestival runs from 11:00 AM to 9:00 PM on Saturday and Sunday.',
+      date: new Date(new Date().setDate(new Date().getDate() + 3)).setHours(11, 0, 0, 0).toString(),
+      location: 'Place Sainte-Catherine, Brussels',
+      venue: 'Place Sainte-Catherine',
+      category: 'food',
+      imageUrl: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Brussels Food Council',
+      source: 'facebook',
+      latitude: 50.8503,
+      longitude: 4.3476,
+      distance: 1.5
+    },
+    {
+      id: '4',
+      title: 'Brussels Architecture Tour',
+      description: 'Discover the architectural treasures of Brussels in this guided walking tour.',
+      longDescription: 'Join our expert guide on a fascinating journey through Brussels\' architectural history. This tour highlights the city\'s remarkable diversity of styles from medieval to postmodern.\n\nHighlights include the Grand Place (UNESCO World Heritage site), Art Nouveau gems by Victor Horta, and contemporary landmarks like the European Quarter.\n\nThe tour is approximately 2.5 hours long and covers about 3 kilometers at a leisurely pace. Comfortable walking shoes recommended.',
+      date: new Date(new Date().setDate(new Date().getDate() + 2)).setHours(15, 0, 0, 0).toString(),
+      location: 'Starting at Grand Place, Brussels',
+      venue: 'Grand Place (starting point)',
+      category: 'cultural',
+      imageUrl: 'https://images.unsplash.com/photo-1612698093158-e07ac200d44e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Brussels Walking Tours',
+      source: 'meetup',
+      latitude: 50.8467,
+      longitude: 4.3525,
+      distance: 0.3
+    },
+    {
+      id: '5',
+      title: 'Electronic Music Night',
+      description: 'Experience Brussels' vibrant nightlife with top DJs and electronic music.',
+      longDescription: 'Fuse Club presents a night of cutting-edge electronic music featuring international DJ sensations and local talents. The main floor will focus on techno and house, while the second room offers drum and bass and experimental sounds.\n\nFeatured artists include Berlin-based techno pioneer Marlene Wulf, Brussels\' own Electro Collective, and rising star DJ Pulse.\n\nDoors open at 11:00 PM and the event continues until 6:00 AM. 18+ with valid ID required for entry.',
+      date: new Date(new Date().setDate(new Date().getDate() + 5)).setHours(23, 0, 0, 0).toString(),
+      location: 'Fuse Club, Brussels',
+      venue: 'Fuse Club',
+      category: 'nightlife',
+      imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Fuse Brussels',
+      source: 'facebook',
+      latitude: 50.8394,
+      longitude: 4.3461,
+      distance: 1.8,
+      featured: true
+    },
+    {
+      id: '6',
+      title: 'Modern Theater Performance',
+      description: 'A contemporary drama exploring themes of identity in multicultural Brussels.',
+      longDescription: 'The Royal Flemish Theatre presents a groundbreaking new production that explores the complex nature of identity in today\'s multicultural Brussels.\n\nWritten by award-winning playwright Marie Devos and directed by international theater director Jan Verstraeten, this multilingual performance blends traditional theatrical elements with innovative multimedia techniques.\n\nPerformances are in Dutch, French, and English with subtitles. The show runs approximately 2 hours with one intermission.',
+      date: new Date(new Date().setDate(new Date().getDate() + 8)).setHours(19, 0, 0, 0).toString(),
+      location: 'Royal Flemish Theatre, Brussels',
+      venue: 'Royal Flemish Theatre',
+      category: 'theater',
+      imageUrl: 'https://images.unsplash.com/photo-1468359601543-843bfaef291a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Royal Flemish Theatre',
+      source: 'ticketmaster',
+      latitude: 50.8463,
+      longitude: 4.3621,
+      distance: 2.5
+    },
+    {
+      id: '7',
+      title: 'Brussels Half Marathon',
+      description: 'Run through the beautiful parks and streets of Brussels in this annual half marathon.',
+      longDescription: 'The Brussels Half Marathon returns for its 15th edition! This popular running event takes participants on a scenic 21.1 km route through the city\'s most beautiful parks, historic neighborhoods, and iconic landmarks.\n\nThe route is relatively flat making it ideal for both experienced runners looking for a personal best and beginners attempting their first half marathon.\n\nRegistration includes a race t-shirt, medal, chip timing, and refreshments. Water stations every 5 km along the route.',
+      date: new Date(new Date().setDate(new Date().getDate() + 14)).setHours(9, 0, 0, 0).toString(),
+      location: 'Parc du Cinquantenaire, Brussels',
+      venue: 'Parc du Cinquantenaire',
+      category: 'sports',
+      imageUrl: 'https://images.unsplash.com/photo-1601439678777-b2b3c56fa627?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Brussels Sports Association',
+      source: 'eventbrite',
+      latitude: 50.8402,
+      longitude: 4.3943,
+      distance: 3.2
+    },
+    {
+      id: '8',
+      title: 'Belgian Chocolate Workshop',
+      description: 'Learn the art of making traditional Belgian chocolates from master chocolatiers.',
+      longDescription: 'Immerse yourself in Belgium\'s most delicious tradition! This hands-on chocolate making workshop is led by master chocolatier Pierre Marcolini.\n\nYou\'ll learn about the bean-to-bar chocolate making process, techniques for tempering chocolate, and create your own pralines and truffles using traditional Belgian recipes with a modern twist.\n\nAll participants will take home their creations (approximately 30 chocolates) in an elegant gift box. All ingredients and equipment provided.',
+      date: new Date(new Date().setDate(new Date().getDate() + 4)).setHours(14, 0, 0, 0).toString(),
+      location: 'Chocolate Academy, Grand Sablon, Brussels',
+      venue: 'Chocolate Academy',
+      category: 'food',
+      imageUrl: 'https://images.unsplash.com/photo-1549007994-cb8bed85524c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500',
+      organizer: 'Belgian Chocolate Guild',
+      source: 'meetup',
+      latitude: 50.8419,
+      longitude: 4.3549,
+      distance: 0.9
+    }
+  ];
+
+  return events;
+};
