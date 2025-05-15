@@ -14,7 +14,7 @@ export default function Header() {
       <div className="flex items-center">
         <h1 className="font-roboto font-bold text-2xl flex items-center">
           <MapPin className="mr-2 text-[#E41E31]" />
-          <span className="text-[#003F8C]">Brussels</span>
+          <span className="text-[#003F8C]">Belgium</span>
           <span className="text-[#FAE042]">Now</span>
         </h1>
       </div>

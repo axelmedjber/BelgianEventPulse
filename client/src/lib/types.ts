@@ -21,12 +21,16 @@ export interface Event {
   longitude: number;
   distance?: number;
   featured?: boolean;
+  city?: BelgianCity;
 }
+
+export type BelgianCity = 'Brussels' | 'Antwerp' | 'Ghent' | 'Bruges' | 'Leuven' | 'Liège' | 'Namur' | 'Charleroi' | 'Mons' | 'Ostend' | 'All';
 
 export interface EventFilter {
   category?: EventCategory | 'all';
   date?: string;
   location?: string;
+  city?: BelgianCity;
 }
 
 export interface Coordinate {
