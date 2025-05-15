@@ -32,7 +32,7 @@ export default function EventCard({ event, onClick }: EventCardProps) {
   const distanceFromUser = event.distance ? `${event.distance.toFixed(1)} km` : '';
 
   return (
-    <div className="event-card p-4 border-b border-gray-200 hover:bg-[#F5F5F5] cursor-pointer" onClick={onClick}>
+    <div className="event-card p-4 border-b border-border hover:bg-muted/50 cursor-pointer" onClick={onClick}>
       <div className="flex">
         <img 
           src={event.imageUrl} 
@@ -44,11 +44,11 @@ export default function EventCard({ event, onClick }: EventCardProps) {
             <span className={`inline-block px-2 py-1 ${getCategoryColor(event.category)} text-xs font-semibold rounded`}>
               {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
             </span>
-            {distanceFromUser && <span className="text-sm text-gray-500">{distanceFromUser}</span>}
+            {distanceFromUser && <span className="text-sm text-muted-foreground">{distanceFromUser}</span>}
           </div>
           <h3 className="font-roboto font-medium text-lg mt-1 line-clamp-1">{event.title}</h3>
-          <p className="text-sm text-gray-600 line-clamp-1">{event.location}</p>
-          <div className="flex items-center mt-2 text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground line-clamp-1">{event.location}</p>
+          <div className="flex items-center mt-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-2" />
             <span>{formatDate(new Date(event.date))}</span>
           </div>

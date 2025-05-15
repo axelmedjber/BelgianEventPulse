@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { Plus, Minus, Navigation, Layers } from 'lucide-react';
+import { useTheme } from '../components/ThemeProvider';
 import { Event } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -26,6 +27,7 @@ export default function MapView({
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{[key: string]: mapboxgl.Marker}>({});
   const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
+  const { theme } = useTheme();
 
   // Initialize map when component mounts
   useEffect(() => {

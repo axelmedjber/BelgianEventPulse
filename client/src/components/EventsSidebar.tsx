@@ -22,10 +22,10 @@ export default function EventsSidebar({
   // No date options as we're only showing today's events
 
   return (
-    <aside className="events-container w-full md:w-2/5 lg:w-1/3 bg-white border-r border-gray-200 flex flex-col">
+    <aside className="events-container w-full md:w-2/5 lg:w-1/3 bg-background border-r border-border flex flex-col">
       {/* Search and filter bar */}
-      <div className="sticky top-0 bg-white z-10 p-4 border-b border-gray-200">
-        <h2 className="font-medium text-lg text-[#003F8C]">Brussels Events</h2>
+      <div className="sticky top-0 bg-background z-10 p-4 border-b border-border">
+        <h2 className="font-medium text-lg text-primary">Brussels Events</h2>
       </div>
 
       {/* Events list */}
@@ -33,7 +33,7 @@ export default function EventsSidebar({
         {isLoading ? (
           // Loading skeletons
           Array(5).fill(0).map((_, index) => (
-            <div key={index} className="p-4 border-b border-gray-200">
+            <div key={index} className="p-4 border-b border-border">
               <div className="flex">
                 <Skeleton className="w-24 h-24 rounded-lg" />
                 <div className="ml-3 flex-1">
@@ -58,7 +58,7 @@ export default function EventsSidebar({
           ))
         ) : (
           <div className="p-8 text-center">
-            <p className="text-gray-500">No events found matching your criteria.</p>
+            <p className="text-muted-foreground">No events found matching your criteria.</p>
           </div>
         )}
       </div>
