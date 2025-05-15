@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertEventSchema, type Event } from "@shared/schema";
+import { insertEventSchema, type Event, belgianCityEnum } from "@shared/schema";
 import { z } from "zod";
 import { fetchAllEvents } from "./api/index";
 
@@ -46,7 +46,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   latitude: event.latitude,
                   longitude: event.longitude,
                   featured: event.featured || false,
-                  city: event.city || 'Brussels'
+                  city: event.city || belgianCityEnum.enum.Brussels
                 });
               }
             } catch (err) {
