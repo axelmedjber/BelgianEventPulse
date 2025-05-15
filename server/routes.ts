@@ -45,7 +45,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   sourceUrl: event.sourceUrl || '',
                   latitude: event.latitude,
                   longitude: event.longitude,
-                  featured: event.featured || false
+                  featured: event.featured || false,
+                  city: event.city || 'Brussels'
                 });
               }
             } catch (err) {
@@ -147,7 +148,8 @@ async function initializeWithMockData() {
           sourceUrl: event.sourceUrl,
           latitude: event.latitude,
           longitude: event.longitude,
-          featured: event.featured
+          featured: event.featured,
+          city: event.city
         });
       }
       
