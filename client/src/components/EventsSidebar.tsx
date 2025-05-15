@@ -74,7 +74,7 @@ export default function EventsSidebar({
                 ? "bg-[#003F8C] text-white text-sm px-3 py-1 rounded-full whitespace-nowrap"
                 : "bg-[#F5F5F5] text-[#333333] text-sm px-3 py-1 rounded-full whitespace-nowrap hover:bg-gray-200"
               }
-              onClick={() => onFilterChange({ category: category.value, date: dateFilter })}
+              onClick={() => onFilterChange({ category: category.value })}
             >
               {category.label}
             </Button>

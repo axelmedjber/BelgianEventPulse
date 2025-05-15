@@ -23,7 +23,8 @@ export default function Home({ onEventSelect }: HomeProps) {
     queryKey: ['/api/events', selectedCategory],
   });
 
-  // Apply filters to events - only show "happening now" events and filter by category and search
+  // Apply filters to events - only filter by category and search
+  // (we're already filtering by today's date on the server)
   const filteredEvents = events.filter(event => {
     // Filter by search query
     const matchesSearch = 
@@ -34,12 +35,7 @@ export default function Home({ onEventSelect }: HomeProps) {
     // Filter by category
     const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
     
-    // Filter to show only events happening now (today)
-    const eventDate = new Date(event.date);
-    const today = new Date();
-    const isHappeningToday = eventDate.toDateString() === today.toDateString();
-    
-    return matchesSearch && matchesCategory && isHappeningToday;
+    return matchesSearch && matchesCategory;
   });
 
   // Handle filter changes - now only for category

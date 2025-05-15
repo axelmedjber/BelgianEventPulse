@@ -5,62 +5,26 @@ import { insertEventSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all events
+  // Get all events - always filtered to show only today's events
   app.get('/api/events', async (req, res) => {
     try {
       const category = req.query.category as string | undefined;
-      const date = req.query.date as string | undefined;
       
       const events = await storage.getAllEvents();
       
-      // Filter events based on query parameters
+      // Filter events based on query parameters and to show only today's events
       let filteredEvents = events;
       
+      // Always filter to show only today's events
+      const today = new Date();
+      filteredEvents = filteredEvents.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate.toDateString() === today.toDateString();
+      });
+      
+      // Apply category filter if provided
       if (category && category !== 'all') {
         filteredEvents = filteredEvents.filter(event => event.category === category);
-      }
-      
-      if (date) {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        
-        switch (date) {
-          case 'today':
-            filteredEvents = filteredEvents.filter(event => {
-              const eventDate = new Date(event.date);
-              return eventDate.toDateString() === today.toDateString();
-            });
-            break;
-          case 'tomorrow':
-            filteredEvents = filteredEvents.filter(event => {
-              const eventDate = new Date(event.date);
-              return eventDate.toDateString() === tomorrow.toDateString();
-            });
-            break;
-          case 'weekend':
-            const friday = new Date(today);
-            friday.setDate(today.getDate() + (5 - today.getDay()));
-            const sunday = new Date(friday);
-            sunday.setDate(friday.getDate() + 2);
-            
-            filteredEvents = filteredEvents.filter(event => {
-              const eventDate = new Date(event.date);
-              return eventDate >= friday && eventDate <= sunday;
-            });
-            break;
-          case 'next-week':
-            const nextMonday = new Date(today);
-            nextMonday.setDate(today.getDate() + (8 - today.getDay()) % 7);
-            const nextSunday = new Date(nextMonday);
-            nextSunday.setDate(nextMonday.getDate() + 6);
-            
-            filteredEvents = filteredEvents.filter(event => {
-              const eventDate = new Date(event.date);
-              return eventDate >= nextMonday && eventDate <= nextSunday;
-            });
-            break;
-        }
       }
       
       res.json(filteredEvents);
