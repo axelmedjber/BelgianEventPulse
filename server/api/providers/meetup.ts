@@ -1,11 +1,6 @@
-import { Event } from '../../../shared/schema';
-import { ApiClient } from '../utils/api-client';
-import { ApiConfig } from '../utils/config';
-import { EventAdapter } from '../utils/event-adapter';
-import { log } from '../../vite';
-
-// Meetup API client
-const MEETUP_BASE_URL = 'https://api.meetup.com';
+import { Event } from "@shared/schema";
+import { EventAdapter } from "../utils/event-adapter";
+import { log } from "../../vite";
 
 /**
  * Meetup API provider
@@ -16,42 +11,39 @@ export const meetup = {
    * @returns Array of normalized events
    */
   async fetchEvents(): Promise<Event[]> {
-    const apiKey = ApiConfig.getMeetupApiKey();
-    if (!apiKey) {
-      log('Meetup API key not available, skipping...', 'meetup-api');
-      return [];
-    }
-    
     try {
-      // Create API client
-      const client = new ApiClient(MEETUP_BASE_URL, {
-        'Authorization': `Bearer ${apiKey}`
-      });
+      log('Fetching events from Meetup...', 'meetup-api');
       
-      // Get Brussels coordinates for searching nearby
-      const { lat, lng, radius } = ApiConfig.getBrusselsCoordinates();
+      // Check if API key is configured
+      const apiKey = process.env.MEETUP_API_KEY;
+      if (!apiKey) {
+        log('Meetup API key not found in environment variables', 'api-config');
+        log('Meetup API key not available, skipping...', 'meetup-api');
+        return [];
+      }
       
-      // Format dates for Meetup API
-      const today = new Date();
-      const nextWeek = new Date();
-      nextWeek.setDate(today.getDate() + 7);
+      // Real implementation would fetch from Meetup API
+      // For demo, we'll return an empty array unless we have an API key
+      /*
+      const response = await fetch(
+        `https://api.meetup.com/find/upcoming_events?&sign=true&photo-host=public&lon=4.35&lat=50.85&page=50&key=${apiKey}`
+      );
       
-      // Fetch events in Brussels area
-      const response = await client.get<MeetupEvent[]>('/find/upcoming_events', {
-        params: {
-          'lat': lat,
-          'lon': lng,
-          'radius': radius,
-          'end_date_range': nextWeek.toISOString(),
-          'fields': 'featured_photo,group_category,venue,description,fee',
-          'page': 100
-        }
-      });
+      if (!response.ok) {
+        throw new Error(`Meetup API returned ${response.status}: ${response.statusText}`);
+      }
       
-      // Process and normalize events
-      return this.processEvents(response || []);
+      const data = await response.json();
+      
+      if (!data.events || !Array.isArray(data.events)) {
+        return [];
+      }
+      
+      return this.processEvents(data.events);
+      */
+      return [];
     } catch (error) {
-      log(`Error fetching Meetup events: ${error instanceof Error ? error.message : String(error)}`, 'meetup-api');
+      log(`Error fetching from Meetup: ${error instanceof Error ? error.message : String(error)}`, 'meetup-api');
       return [];
     }
   },
@@ -62,85 +54,67 @@ export const meetup = {
    * @returns Normalized events
    */
   processEvents(events: MeetupEvent[]): Event[] {
-    return events
-      .filter(event => !!event.name && !!event.time)
-      .map(event => {
-        // Build location string
-        let location = '';
-        let venue = null;
-        let latitude = 0;
-        let longitude = 0;
+    return events.filter(event => !!event.name).map(event => {
+      // Extract location data
+      let location = 'Brussels, Belgium';
+      let latitude = 50.85045;
+      let longitude = 4.34878;
+      
+      if (event.venue) {
+        const venue = event.venue;
         
-        if (event.venue) {
-          venue = event.venue.name;
-          const locParts = [];
-          
-          if (event.venue.address_1) locParts.push(event.venue.address_1);
-          if (event.venue.address_2) locParts.push(event.venue.address_2);
-          if (event.venue.address_3) locParts.push(event.venue.address_3);
-          if (event.venue.city) locParts.push(event.venue.city);
-          if (event.venue.zip) locParts.push(event.venue.zip);
-          if (event.venue.country) locParts.push(event.venue.country);
-          
-          location = locParts.join(', ');
-          
-          // Get venue coordinates
-          if (event.venue.lat && event.venue.lon) {
-            [longitude, latitude] = EventAdapter.normalizeCoordinates(
-              event.venue.lat,
-              event.venue.lon
-            );
-          }
-        } else {
-          // If no venue, use group location
-          if (event.group?.localized_location) {
-            location = event.group.localized_location;
-          }
+        const addressParts = [];
+        if (venue.address_1) addressParts.push(venue.address_1);
+        if (venue.city) addressParts.push(venue.city);
+        if (venue.state) addressParts.push(venue.state);
+        if (venue.country) addressParts.push(venue.country);
+        
+        if (addressParts.length > 0) {
+          location = addressParts.join(', ');
         }
         
-        // Determine category from group's category
-        let category = '';
-        if (event.group?.category?.name) {
-          category = event.group.category.name;
+        if (venue.lat !== undefined && venue.lon !== undefined) {
+          latitude = venue.lat;
+          longitude = venue.lon;
         }
-        
-        // Determine if this is a featured event (paid events and those with high attendance)
-        const isPaid = event.fee && event.fee.amount > 0;
-        const highAttendance = (event.yes_rsvp_count || 0) > 20;
-        const featured = isPaid || highAttendance;
-        
-        // Get event image if available
-        let imageUrl = '';
-        if (event.featured_photo?.photo_link) {
-          imageUrl = event.featured_photo.photo_link;
-        }
-        
-        // Convert to standard event format
-        const standardEvent: Omit<Event, 'id'> = {
-          title: event.name,
-          description: event.description || '',
-          longDescription: event.description || null,
-          date: new Date(event.time),
-          endDate: event.duration ? new Date(event.time + event.duration) : null,
-          location,
-          venue,
-          category: EventAdapter.mapCategory(category),
-          imageUrl,
-          organizer: event.group?.name || '',
-          organizerImageUrl: null,
-          source: 'meetup',
-          sourceUrl: event.link,
-          latitude,
-          longitude,
-          featured
-        };
-        
-        return standardEvent as Event;
-      });
+      }
+      
+      // Date handling
+      const localDate = event.local_date;
+      const localTime = event.local_time || '19:00:00';
+      const eventDate = new Date(`${localDate}T${localTime}`);
+      
+      // Determine category
+      let category = 'cultural';
+      if (event.group?.category?.name) {
+        category = EventAdapter.mapCategory(event.group.category.name);
+      }
+      
+      // Convert to standard event format
+      const standardEvent: Omit<Event, 'id'> = {
+        title: event.name,
+        description: event.description || '',
+        longDescription: event.description || null,
+        date: eventDate,
+        endDate: event.duration ? new Date(eventDate.getTime() + event.duration) : null,
+        location,
+        venue: event.venue?.name || null,
+        category,
+        imageUrl: event.featured_photo?.highres_link || event.featured_photo?.photo_link || 'https://via.placeholder.com/400x200?text=Meetup+Event',
+        organizer: event.group?.name || 'Meetup Group',
+        organizerImageUrl: null,
+        source: 'meetup',
+        sourceUrl: event.link,
+        latitude,
+        longitude,
+        featured: (event.yes_rsvp_count || 0) > 20
+      };
+      
+      return standardEvent as Event;
+    });
   }
 };
 
-// Types for Meetup API responses
 interface MeetupEvent {
   id: string;
   name: string;

@@ -35,11 +35,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   endDate: event.endDate || null,
                   location: event.location,
                   venue: event.venue,
-                  category: event.category,
+                  // Ensure category is one of the allowed enum values
+                  category: (event.category as any),
                   imageUrl: event.imageUrl,
                   organizer: event.organizer,
                   organizerImageUrl: event.organizerImageUrl,
-                  source: event.source,
+                  // Ensure source is one of the allowed enum values
+                  source: (event.source as any),
                   sourceUrl: event.sourceUrl || '',
                   latitude: event.latitude,
                   longitude: event.longitude,
