@@ -2,7 +2,8 @@
 
 BelgiumNow is a web-based event discovery platform that helps users find cultural, social, and entertainment events happening across Belgian cities. The application displays events on an interactive map and provides filtering capabilities to help users discover events in their preferred cities.
 
-![BelgiumNow Application Screenshot](screenshots/belgiumNow_screenshot.avif)
+## Screenshot
+*The BelgiumNow interface displays an interactive map with events across Belgian cities, complete with city filtering functionality in the sidebar.*
 
 ## Features
 
