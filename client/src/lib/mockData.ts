@@ -74,7 +74,7 @@ export const generateMockEvents = (): Event[] => {
     {
       id: '5',
       title: 'Electronic Music Night',
-      description: 'Experience Brussels' vibrant nightlife with top DJs and electronic music.',
+      description: 'Experience Brussels\' vibrant nightlife with top DJs and electronic music.',
       longDescription: 'Fuse Club presents a night of cutting-edge electronic music featuring international DJ sensations and local talents. The main floor will focus on techno and house, while the second room offers drum and bass and experimental sounds.\n\nFeatured artists include Berlin-based techno pioneer Marlene Wulf, Brussels\' own Electro Collective, and rising star DJ Pulse.\n\nDoors open at 11:00 PM and the event continues until 6:00 AM. 18+ with valid ID required for entry.',
       date: new Date(new Date().setDate(new Date().getDate() + 5)).setHours(23, 0, 0, 0).toString(),
       location: 'Fuse Club, Brussels',
