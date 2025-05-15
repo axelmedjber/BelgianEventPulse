@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import { useState } from "react";
 import { EventDetailModal } from "./components/EventDetailModal";
 import { Event } from "./lib/types";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 function Router() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -43,12 +44,14 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="light">
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 
