@@ -1,179 +1,96 @@
-import { Event, EventCategory, EventSource } from '../../../shared/schema';
+import { EventCategory } from "@shared/schema";
 
 /**
- * Utility for adapting events from different API sources to a common format
+ * Utility class for adapting different API event data to our standard format
  */
 export class EventAdapter {
   /**
-   * Maps a provider's category to our standard event categories
-   * @param providerCategory Original category from event provider
-   * @returns Standardized event category
+   * Map a category from an external source to our standard category format
    */
-  static mapCategory(providerCategory: string): EventCategory {
-    // Map to standardized categories
-    const categoryMap: Record<string, EventCategory> = {
-      // Music categories
-      'music': 'music',
-      'concert': 'music',
-      'festival': 'music',
-      'performance': 'music',
-      'gig': 'music',
-      'dj': 'music',
-      'jazz': 'music',
-      'rock': 'music',
-      'pop': 'music',
-      'classical': 'music',
-      'opera': 'music',
-      
-      // Art categories
-      'art': 'art',
-      'exhibition': 'art',
-      'gallery': 'art',
-      'museum': 'art',
-      'visual': 'art',
-      'painting': 'art',
-      'sculpture': 'art',
-      
-      // Food categories
-      'food': 'food',
-      'drink': 'food',
-      'dinner': 'food',
-      'tasting': 'food',
-      'restaurant': 'food',
-      'cuisine': 'food',
-      'gastronomy': 'food',
-      'culinary': 'food',
-      
-      // Sports categories
-      'sports': 'sports',
-      'sport': 'sports',
-      'fitness': 'sports',
-      'match': 'sports',
-      'game': 'sports',
-      'running': 'sports',
-      'race': 'sports',
-      'athletic': 'sports',
-      
-      // Nightlife categories
-      'nightlife': 'nightlife',
-      'party': 'nightlife',
-      'club': 'nightlife',
-      'bar': 'nightlife',
-      'pub': 'nightlife',
-      'disco': 'nightlife',
-      
-      // Cultural categories
-      'cultural': 'cultural',
-      'heritage': 'cultural',
-      'history': 'cultural',
-      'tour': 'cultural',
-      'workshop': 'cultural',
-      'lecture': 'cultural',
-      'talk': 'cultural',
-      
-      // Theater categories
-      'theater': 'theater',
-      'theatre': 'theater',
-      'play': 'theater',
-      'drama': 'theater',
-      'comedy': 'theater',
-      'acting': 'theater',
-      'performance art': 'theater',
-      'stage': 'theater',
-    };
+  static mapCategory(category: string): EventCategory {
+    const lowerCategory = category.toLowerCase();
     
-    // Clean and normalize the provider category
-    const normalized = providerCategory.toLowerCase().trim();
+    if (lowerCategory.includes('music') || lowerCategory.includes('concert')) {
+      return 'music';
+    } else if (lowerCategory.includes('art') || lowerCategory.includes('exhibition')) {
+      return 'art';
+    } else if (lowerCategory.includes('food') || lowerCategory.includes('drink') || lowerCategory.includes('dining')) {
+      return 'food';
+    } else if (lowerCategory.includes('sport') || lowerCategory.includes('fitness') || lowerCategory.includes('running')) {
+      return 'sports';
+    } else if (lowerCategory.includes('night') || lowerCategory.includes('party') || lowerCategory.includes('club')) {
+      return 'nightlife';
+    } else if (lowerCategory.includes('theater') || lowerCategory.includes('theatre') || lowerCategory.includes('performance')) {
+      return 'theater';
+    } else {
+      // Default category
+      return 'cultural';
+    }
+  }
+  
+  /**
+   * Format a full address from components
+   */
+  static formatAddress(components: {
+    street?: string;
+    city?: string;
+    region?: string;
+    postalCode?: string;
+    country?: string;
+  }): string {
+    const parts = [];
     
-    // Try to find a direct match
-    for (const [key, value] of Object.entries(categoryMap)) {
-      if (normalized === key || normalized.includes(key)) {
-        return value;
+    if (components.street) parts.push(components.street);
+    if (components.city) parts.push(components.city);
+    
+    if (components.region) {
+      if (components.postalCode) {
+        parts.push(`${components.postalCode} ${components.region}`);
+      } else {
+        parts.push(components.region);
       }
+    } else if (components.postalCode) {
+      parts.push(components.postalCode);
     }
     
-    // Default to 'cultural' if no match is found
-    return 'cultural';
-  }
-  
-  /**
-   * Determines whether an event is a featured event
-   * @param event Event to check
-   * @returns Whether the event should be featured
-   */
-  static determineIfFeatured(event: Partial<Event>): boolean {
-    // Example logic for featuring events
-    // Events could be featured based on popularity, size, special flags, etc.
-    const isTrending = event.source === 'ticketmaster'; // Example based on source
-    const hasImage = !!event.imageUrl;
-    const isPopular = event.title?.toLowerCase().includes('festival');
+    if (components.country) parts.push(components.country);
     
-    return !!(isTrending || (hasImage && isPopular));
+    return parts.join(', ');
   }
   
   /**
-   * Convert location coordinates to a consistent format
-   * @param lat Latitude
-   * @param lng Longitude
-   * @returns Formatted coordinates
+   * Convert Brussels coordinates to standard format
+   * Brussels sometimes uses inverted coordinates
    */
-  static normalizeCoordinates(lat: string | number, lng: string | number): [number, number] {
-    return [
-      typeof lng === 'string' ? parseFloat(lng) : lng,
-      typeof lat === 'string' ? parseFloat(lat) : lat
-    ];
-  }
-  
-  /**
-   * Creates a standardized event object from different API sources
-   * @param rawEvent Raw event data from an API
-   * @param source Source API identifier
-   * @returns Standardized event object
-   */
-  static createEvent(rawEvent: any, source: EventSource): Partial<Event> {
-    // Create a base event with common fields
-    const event: Partial<Event> = {
-      source,
-      // We'll set the ID in the storage layer
-      title: '',
-      date: new Date(),
-      description: '',
-      location: '',
-      category: 'cultural', // Default category
-      imageUrl: '',
-      organizer: '',
-      latitude: 0,
-      longitude: 0
-    };
-    
-    return event;
-  }
-  
-  /**
-   * Extract a URL from a text description or object
-   * @param data Text or object that might contain a URL
-   * @returns URL if found, otherwise an empty string
-   */
-  static extractUrl(data: any): string {
-    if (!data) return '';
-    
-    if (typeof data === 'string') {
-      // Find URL in text using regex
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const match = data.match(urlRegex);
-      return match ? match[0] : '';
+  static normalizeBrusselsCoordinates(coords: [number, number]): [number, number] {
+    // Brussels is roughly at [50.85, 4.35]
+    // Check if coordinates are reversed (longitude first instead of latitude)
+    if (coords[0] > 0 && coords[0] < 10 && Math.abs(coords[1]) > 40) {
+      return [coords[1], coords[0]];
     }
-    
-    if (typeof data === 'object') {
-      // Check common URL fields in objects
-      const possibleUrlFields = ['url', 'link', 'href', 'uri', 'web', 'website', 'seeUrl'];
-      for (const field of possibleUrlFields) {
-        if (data[field] && typeof data[field] === 'string') {
-          return data[field];
-        }
-      }
-    }
-    
-    return '';
+    return coords;
+  }
+  
+  /**
+   * Calculate distance between two coordinates in kilometers
+   */
+  static calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    // Haversine formula
+    const R = 6371; // Radius of the Earth in km
+    const dLat = this.deg2rad(lat2 - lat1);
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+  
+  /**
+   * Convert degrees to radians
+   */
+  private static deg2rad(deg: number): number {
+    return deg * (Math.PI/180);
   }
 }

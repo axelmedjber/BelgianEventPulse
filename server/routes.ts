@@ -1,27 +1,75 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertEventSchema } from "@shared/schema";
+import { insertEventSchema, type Event } from "@shared/schema";
 import { z } from "zod";
+import { fetchAllEvents } from "./api/index";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all events - always filtered to show only today's events
+  // Get all events - from both storage and external API providers
   app.get('/api/events', async (req, res) => {
     try {
-      const events = await storage.getAllEvents();
+      // Get events from storage
+      const storageEvents = await storage.getAllEvents();
       
-      // Filter events based to show only today's events
-      let filteredEvents = events;
+      // Try to fetch events from external APIs
+      let apiEvents: Event[] = [];
+      try {
+        apiEvents = await fetchAllEvents();
+        
+        // If we got API events, store them for future use
+        if (apiEvents.length > 0) {
+          for (const event of apiEvents) {
+            try {
+              // Convert to insert format and add to storage
+              // Skip events that are already in storage (using sourceUrl as unique identifier)
+              const existingEvents = storageEvents.filter(e => 
+                e.sourceUrl === event.sourceUrl && e.source === event.source);
+              
+              if (existingEvents.length === 0) {
+                await storage.createEvent({
+                  title: event.title,
+                  description: event.description || '',
+                  longDescription: event.longDescription,
+                  date: new Date(event.date),
+                  endDate: event.endDate || null,
+                  location: event.location,
+                  venue: event.venue,
+                  category: event.category,
+                  imageUrl: event.imageUrl,
+                  organizer: event.organizer,
+                  organizerImageUrl: event.organizerImageUrl,
+                  source: event.source,
+                  sourceUrl: event.sourceUrl || '',
+                  latitude: event.latitude,
+                  longitude: event.longitude,
+                  featured: event.featured || false
+                });
+              }
+            } catch (err) {
+              console.error('Error saving API event to storage:', err);
+            }
+          }
+        }
+      } catch (apiError) {
+        console.error('Error fetching from APIs:', apiError);
+        // Continue with storage events if API fetch fails
+      }
       
-      // Always filter to show only today's events
+      // Combine events from storage (which now includes newly saved API events)
+      // Re-fetch to get events with IDs
+      const allEvents = await storage.getAllEvents();
+      
+      // Filter to show only today's events
       const today = new Date();
-      filteredEvents = filteredEvents.filter(event => {
+      const filteredEvents = allEvents.filter(event => {
         const eventDate = new Date(event.date);
         return eventDate.toDateString() === today.toDateString();
       });
       
       res.json(filteredEvents);
     } catch (error) {
+      console.error('Error in events endpoint:', error);
       res.status(500).json({ message: 'Error fetching events' });
     }
   });
