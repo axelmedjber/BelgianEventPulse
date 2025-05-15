@@ -10,38 +10,17 @@ interface HomeProps {
 }
 
 export default function Home({ onEventSelect }: HomeProps) {
-  // State for search query and selected category
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory | 'all'>('all');
-  
   // State for map center and zoom
   const [mapCenter, setMapCenter] = useState<[number, number]>([4.3517, 50.8503]); // Brussels coordinates
   const [mapZoom, setMapZoom] = useState<number>(12);
 
   // Fetch events from the API
   const { data: events = [], isLoading } = useQuery<Event[]>({
-    queryKey: ['/api/events', selectedCategory],
+    queryKey: ['/api/events'],
   });
 
-  // Apply filters to events - only filter by category and search
-  // (we're already filtering by today's date on the server)
-  const filteredEvents = events.filter(event => {
-    // Filter by search query
-    const matchesSearch = 
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      event.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Filter by category
-    const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
-
-  // Handle filter changes - now only for category
-  const handleFilterChange = (filter: EventFilter) => {
-    setSelectedCategory(filter.category || 'all');
-  };
+  // No filtering - show all events
+  const filteredEvents = events;
 
   // Handle map marker click
   const handleMarkerClick = (event: Event) => {
@@ -64,11 +43,7 @@ export default function Home({ onEventSelect }: HomeProps) {
         <EventsSidebar
           events={filteredEvents}
           isLoading={isLoading}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onFilterChange={handleFilterChange}
           onEventClick={handleEventCardClick}
-          selectedCategory={selectedCategory}
         />
         
         <MapView

@@ -8,11 +8,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all events - always filtered to show only today's events
   app.get('/api/events', async (req, res) => {
     try {
-      const category = req.query.category as string | undefined;
-      
       const events = await storage.getAllEvents();
       
-      // Filter events based on query parameters and to show only today's events
+      // Filter events based to show only today's events
       let filteredEvents = events;
       
       // Always filter to show only today's events
@@ -21,11 +19,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const eventDate = new Date(event.date);
         return eventDate.toDateString() === today.toDateString();
       });
-      
-      // Apply category filter if provided
-      if (category && category !== 'all') {
-        filteredEvents = filteredEvents.filter(event => event.category === category);
-      }
       
       res.json(filteredEvents);
     } catch (error) {

@@ -10,33 +10,14 @@ import { Event, EventCategory, EventFilter } from '@/lib/types';
 interface EventsSidebarProps {
   events: Event[];
   isLoading: boolean;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  onFilterChange: (filter: EventFilter) => void;
   onEventClick: (event: Event) => void;
-  selectedCategory: EventCategory | 'all';
 }
 
 export default function EventsSidebar({
   events,
   isLoading,
-  searchQuery,
-  onSearchChange,
-  onFilterChange,
-  onEventClick,
-  selectedCategory
+  onEventClick
 }: EventsSidebarProps) {
-
-  const categories: { label: string; value: EventCategory | 'all' }[] = [
-    { label: 'All Events', value: 'all' },
-    { label: 'Music', value: 'music' },
-    { label: 'Art', value: 'art' },
-    { label: 'Food', value: 'food' },
-    { label: 'Sports', value: 'sports' },
-    { label: 'Nightlife', value: 'nightlife' },
-    { label: 'Cultural', value: 'cultural' },
-    { label: 'Theater', value: 'theater' }
-  ];
 
   // No date options as we're only showing today's events
 
@@ -44,25 +25,7 @@ export default function EventsSidebar({
     <aside className="events-container w-full md:w-2/5 lg:w-1/3 bg-white border-r border-gray-200 flex flex-col">
       {/* Search and filter bar */}
       <div className="sticky top-0 bg-white z-10 p-4 border-b border-gray-200">
-
-        
-        <div className="flex space-x-2 overflow-x-auto pb-2">
-          {categories.map((category) => (
-            <Button
-              key={category.value}
-              variant={selectedCategory === category.value ? "default" : "outline"}
-              className={selectedCategory === category.value 
-                ? "bg-[#003F8C] text-white text-sm px-3 py-1 rounded-full whitespace-nowrap"
-                : "bg-[#F5F5F5] text-[#333333] text-sm px-3 py-1 rounded-full whitespace-nowrap hover:bg-gray-200"
-              }
-              onClick={() => onFilterChange({ category: category.value })}
-            >
-              {category.label}
-            </Button>
-          ))}
-        </div>
-        
-
+        <h2 className="font-medium text-lg text-[#003F8C]">Brussels Events</h2>
       </div>
 
       {/* Events list */}
