@@ -26,8 +26,12 @@ export default function MapView({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{[key: string]: mapboxgl.Marker}>({});
-  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
   const { theme } = useTheme();
+  const [mapStyle, setMapStyle] = useState(
+    theme === 'dark' 
+      ? 'mapbox://styles/mapbox/navigation-night-v1' 
+      : 'mapbox://styles/mapbox/streets-v12'
+  );
 
   // Initialize map when component mounts
   useEffect(() => {
@@ -68,6 +72,15 @@ export default function MapView({
       map.current.setStyle(mapStyle);
     }
   }, [mapStyle]);
+  
+  // Update map style when theme changes
+  useEffect(() => {
+    if (theme === 'dark') {
+      setMapStyle('mapbox://styles/mapbox/navigation-night-v1');
+    } else {
+      setMapStyle('mapbox://styles/mapbox/streets-v12');
+    }
+  }, [theme]);
 
   // Update map center and zoom when props change
   useEffect(() => {
@@ -90,9 +103,13 @@ export default function MapView({
       // Create marker element
       const markerEl = document.createElement('div');
       markerEl.className = 'map-marker';
-      markerEl.style.backgroundColor = event.featured ? '#E41E31' : '#003F8C';
-      markerEl.style.border = '2px solid white';
-      markerEl.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+      markerEl.style.backgroundColor = event.featured ? 
+        (theme === 'dark' ? '#ff4759' : '#E41E31') : 
+        (theme === 'dark' ? '#2563eb' : '#003F8C');
+      markerEl.style.border = `2px solid ${theme === 'dark' ? '#333' : 'white'}`;
+      markerEl.style.boxShadow = theme === 'dark' ? 
+        '0 2px 4px rgba(255,255,255,0.2)' : 
+        '0 2px 4px rgba(0,0,0,0.3)';
       
       // Create marker
       const marker = new mapboxgl.Marker(markerEl)
@@ -107,22 +124,28 @@ export default function MapView({
       // Store marker reference
       markersRef.current[event.id] = marker;
     });
-  }, [events, onMarkerClick]);
+  }, [events, onMarkerClick, theme]);
 
   // Handle map style change
   const handleMapStyleChange = (style: string) => {
     switch (style) {
       case 'standard':
-        setMapStyle('mapbox://styles/mapbox/streets-v12');
+        setMapStyle(theme === 'dark' 
+          ? 'mapbox://styles/mapbox/dark-v11' 
+          : 'mapbox://styles/mapbox/streets-v12');
         break;
       case 'satellite':
         setMapStyle('mapbox://styles/mapbox/satellite-streets-v12');
         break;
       case 'transit':
-        setMapStyle('mapbox://styles/mapbox/navigation-day-v1');
+        setMapStyle(theme === 'dark'
+          ? 'mapbox://styles/mapbox/navigation-night-v1'
+          : 'mapbox://styles/mapbox/navigation-day-v1');
         break;
       default:
-        setMapStyle('mapbox://styles/mapbox/streets-v12');
+        setMapStyle(theme === 'dark'
+          ? 'mapbox://styles/mapbox/dark-v11'
+          : 'mapbox://styles/mapbox/streets-v12');
     }
   };
 
@@ -165,17 +188,17 @@ export default function MapView({
       <div ref={mapContainer} className="map-area h-full w-full relative" />
       
       {/* Map controls */}
-      <div className="absolute top-4 right-4 bg-white rounded-md shadow-md">
+      <div className="absolute top-4 right-4 bg-background rounded-md shadow-md">
         <Button 
           variant="ghost" 
-          className="p-2 hover:bg-[#F5F5F5] border-b border-gray-200 block w-full rounded-none rounded-t-md" 
+          className="p-2 hover:bg-muted border-b border-border block w-full rounded-none rounded-t-md" 
           onClick={handleZoomIn}
         >
           <Plus className="h-5 w-5" />
         </Button>
         <Button 
           variant="ghost" 
-          className="p-2 hover:bg-[#F5F5F5] block w-full rounded-none rounded-b-md" 
+          className="p-2 hover:bg-muted block w-full rounded-none rounded-b-md" 
           onClick={handleZoomOut}
         >
           <Minus className="h-5 w-5" />
@@ -183,8 +206,8 @@ export default function MapView({
       </div>
 
       {/* Map style selector */}
-      <div className="absolute top-4 left-4 bg-white rounded-md shadow-md p-2">
-        <Select onValueChange={handleMapStyleChange} defaultValue="standard">
+      <div className="absolute top-4 left-4 bg-background rounded-md shadow-md p-2">
+        <Select onValueChange={handleMapStyleChange} defaultValue={theme === 'dark' ? 'transit' : 'standard'}>
           <SelectTrigger className="w-24 text-sm focus:outline-none h-8 border-0">
             <SelectValue placeholder="Map Style" />
           </SelectTrigger>
@@ -199,21 +222,21 @@ export default function MapView({
       {/* Location button */}
       <Button
         variant="outline"
-        className="absolute bottom-24 right-4 bg-white p-3 rounded-full shadow-md hover:bg-[#F5F5F5] h-10 w-10"
+        className="absolute bottom-24 right-4 bg-background p-3 rounded-full shadow-md hover:bg-muted h-10 w-10"
         onClick={handleGetUserLocation}
       >
-        <Navigation className="h-5 w-5 text-[#003F8C]" />
+        <Navigation className="h-5 w-5 text-primary" />
       </Button>
 
       {/* Map legend - on mobile only */}
-      <div className="md:hidden absolute bottom-4 left-4 right-4 bg-white rounded-md shadow-md p-3">
+      <div className="md:hidden absolute bottom-4 left-4 right-4 bg-background rounded-md shadow-md p-3">
         <div className="flex justify-between">
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-[#003F8C] mr-2"></div>
+            <div className="w-3 h-3 rounded-full bg-primary mr-2"></div>
             <span className="text-xs">Regular Events</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-[#E41E31] mr-2"></div>
+            <div className="w-3 h-3 rounded-full bg-accent mr-2"></div>
             <span className="text-xs">Featured Events</span>
           </div>
         </div>
