@@ -80,7 +80,34 @@ export default function Home({ onEventSelect }: HomeProps) {
     <div className="flex flex-col h-screen">
       <Header />
       
-      <div className="flex flex-col md:flex-row flex-1 h-[calc(100vh-60px)]">
+      <div className="bg-background p-2 border-b flex items-center justify-center gap-4">
+        <div className="flex items-center gap-2">
+          <Label htmlFor="city-select">City:</Label>
+          <Select value={selectedCity} onValueChange={handleCityChange}>
+            <SelectTrigger id="city-select" className="w-[180px]">
+              <SelectValue placeholder="Select city" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Belgium</SelectItem>
+              <SelectItem value="Brussels">Brussels</SelectItem>
+              <SelectItem value="Antwerp">Antwerp</SelectItem>
+              <SelectItem value="Ghent">Ghent</SelectItem>
+              <SelectItem value="Bruges">Bruges</SelectItem>
+              <SelectItem value="Leuven">Leuven</SelectItem>
+              <SelectItem value="Liège">Liège</SelectItem>
+              <SelectItem value="Namur">Namur</SelectItem>
+              <SelectItem value="Charleroi">Charleroi</SelectItem>
+              <SelectItem value="Mons">Mons</SelectItem>
+              <SelectItem value="Ostend">Ostend</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          {filteredEvents.length} events found {selectedCity !== 'All' ? `in ${selectedCity}` : 'across Belgium'}
+        </div>
+      </div>
+      
+      <div className="flex flex-col md:flex-row flex-1 h-[calc(100vh-102px)]">
         <EventsSidebar
           events={filteredEvents}
           isLoading={isLoading}

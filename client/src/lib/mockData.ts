@@ -1,6 +1,6 @@
 // This file is used only for development and testing
 // In production, events will be fetched from the API
-import { Event, EventCategory, EventSource } from './types';
+import { Event, EventCategory, EventSource, BelgianCity } from './types';
 
 export const generateMockEvents = (): Event[] => {
   const events: Event[] = [
@@ -21,7 +21,8 @@ export const generateMockEvents = (): Event[] => {
       latitude: 50.8466,
       longitude: 4.3528,
       distance: 2.1,
-      featured: true
+      featured: true,
+      city: 'Brussels'
     },
     {
       id: '2',
@@ -37,7 +38,8 @@ export const generateMockEvents = (): Event[] => {
       source: 'eventbrite',
       latitude: 50.8422,
       longitude: 4.3585,
-      distance: 0.8
+      distance: 0.8,
+      city: 'Brussels'
     },
     {
       id: '3',
@@ -53,7 +55,8 @@ export const generateMockEvents = (): Event[] => {
       source: 'facebook',
       latitude: 50.8503,
       longitude: 4.3476,
-      distance: 1.5
+      distance: 1.5,
+      city: 'Brussels'
     },
     {
       id: '4',
@@ -69,7 +72,8 @@ export const generateMockEvents = (): Event[] => {
       source: 'meetup',
       latitude: 50.8467,
       longitude: 4.3525,
-      distance: 0.3
+      distance: 0.3,
+      city: 'Brussels'
     },
     {
       id: '5',
@@ -86,7 +90,8 @@ export const generateMockEvents = (): Event[] => {
       latitude: 50.8394,
       longitude: 4.3461,
       distance: 1.8,
-      featured: true
+      featured: true,
+      city: 'Brussels'
     },
     {
       id: '6',
@@ -102,7 +107,8 @@ export const generateMockEvents = (): Event[] => {
       source: 'ticketmaster',
       latitude: 50.8463,
       longitude: 4.3621,
-      distance: 2.5
+      distance: 2.5,
+      city: 'Brussels'
     },
     {
       id: '7',
@@ -118,7 +124,8 @@ export const generateMockEvents = (): Event[] => {
       source: 'eventbrite',
       latitude: 50.8402,
       longitude: 4.3943,
-      distance: 3.2
+      distance: 3.2,
+      city: 'Brussels'
     },
     {
       id: '8',
